@@ -24,6 +24,9 @@ namespace ibf_unpack
 
         private void unpackBtn_Click(object sender, EventArgs e)
         {
+            Enabled = false;
+            Cursor = Cursors.WaitCursor;
+
             try
             {
                 string path = pathTxt.Text.Trim();
@@ -35,6 +38,11 @@ namespace ibf_unpack
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Enabled = true;
+                Cursor = Cursors.Default;
             }
         }
 
