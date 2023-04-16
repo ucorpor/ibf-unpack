@@ -30,7 +30,7 @@ namespace ibf_unpack
             try
             {
                 string path = pathTxt.Text.Trim();
-                IbfUnpack.Unpack(path);
+                IbfUnpack.Unpack(path, renameCb.Checked);
                 string systemDir = Path.Combine(Path.GetDirectoryName(path), "System");
                 string message = $"Successfully unpacked to:{Environment.NewLine}{systemDir}";
                 MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
