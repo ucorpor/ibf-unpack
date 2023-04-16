@@ -5,3 +5,5 @@ Utility for unpack ini-files from `ConfigINI.IBF` for Bioshock, Bioshock 2, Bios
 After unpack ini-files placed to `ContentBaked\pc\System` directory.
 
 You need to rename `ConfigINI.IBF` after unpacking, because Vengeance Engine loads the IBF before INI-files in `System` directory.
+
+Latest release [download](https://github.com/ucorpor/ibf-unpack/releases/latest/download/ibf-unpack.zip).
