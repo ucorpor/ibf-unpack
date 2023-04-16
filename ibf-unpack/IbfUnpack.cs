@@ -13,22 +13,15 @@ namespace ibf_unpack
             Directory.CreateDirectory(systemDir);
             
             Stream stream = File.OpenRead(archivePath);
-            int fileNameLength = stream.ReadByte();
+            int fileNameLength = stream.ReadByte() * 2 - 2;
             while (fileNameLength > 0)
             {
-                string fileName = string.Empty;
-                for (int i = 0; i < fileNameLength; i++)
-                {
-                    int currentByte = stream.ReadByte();
-                    if (currentByte > 0)
-                    {
-                        fileName += Convert.ToChar(currentByte);
-                    }
-                    stream.ReadByte();
-                }
-
+                string fileName = ReadUtf16Le(stream, fileNameLength);
                 string filePath = Path.Combine(systemDir, fileName);
                 File.WriteAllText(filePath, string.Empty);
+
+                stream.ReadByte();
+                stream.ReadByte();
 
                 int chunkSize = 65536;
                 int fileLength = BitConverter.ToInt32(ReadBytes(stream, 4), 0);
@@ -40,7 +33,7 @@ namespace ibf_unpack
                 int remained = fileLength - fileLength / chunkSize * chunkSize;
                 WriteChunkFromStream(stream, remained, filePath);
 
-                fileNameLength = stream.ReadByte();
+                fileNameLength = stream.ReadByte() * 2 - 2;
             }
             stream.Close();
 
@@ -52,6 +45,12 @@ namespace ibf_unpack
             byte[] bytesArray = new byte[length];
             stream.Read(bytesArray, 0, length);
             return bytesArray;
+        }
+
+        private static string ReadUtf16Le(Stream stream, int size)
+        {
+            byte[] bytesArray = ReadBytes(stream, size);
+            return Encoding.Unicode.GetString(bytesArray);
         }
 
         private static void WriteChunkFromStream(Stream stream, int size, string filePath)
