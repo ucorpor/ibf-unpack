@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CCE2B2CE-F89F-48CD-9EE5-65A898C6E207}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ibf_converter</RootNamespace>
-    <AssemblyName>ibf-converter</AssemblyName>
+    <RootNamespace>ibf_unpack</RootNamespace>
+    <AssemblyName>ibf-unpack</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -63,6 +63,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

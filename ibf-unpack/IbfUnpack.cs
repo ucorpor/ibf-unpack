@@ -30,7 +30,7 @@ namespace ibf_unpack
                 string filePath = Path.Combine(systemDir, fileName);
                 File.WriteAllText(filePath, string.Empty);
 
-                int chunkSize = 4096;
+                int chunkSize = 65536;
                 int fileLength = BitConverter.ToInt32(ReadBytes(stream, 4), 0);
                 for (int i = chunkSize; i < fileLength; i += chunkSize)
                 {
