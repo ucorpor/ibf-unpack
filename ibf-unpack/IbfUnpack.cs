@@ -31,13 +31,13 @@ namespace ibf_unpack
                 File.WriteAllText(filePath, string.Empty);
 
                 int chunkSize = 2048;
-                int fileLenght = BitConverter.ToInt32(ReadBytes(stream, 4), 0);
-                for (int i = chunkSize; i < fileLenght; i += chunkSize)
+                int fileLength = BitConverter.ToInt32(ReadBytes(stream, 4), 0);
+                for (int i = chunkSize; i < fileLength; i += chunkSize)
                 {
                     WriteChunkFromStream(stream, chunkSize, filePath);
                 }
 
-                int remained = fileLenght - fileLenght / chunkSize * chunkSize;
+                int remained = fileLength - fileLength / chunkSize * chunkSize;
                 WriteChunkFromStream(stream, remained, filePath);
 
                 fileNameLength = stream.ReadByte();
