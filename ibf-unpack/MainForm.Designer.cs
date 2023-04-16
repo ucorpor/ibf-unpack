@@ -32,6 +32,7 @@
             this.pathTxt = new System.Windows.Forms.TextBox();
             this.unpackBtn = new System.Windows.Forms.Button();
             this.renameCb = new System.Windows.Forms.CheckBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // pathBtn
@@ -71,11 +72,23 @@
             this.renameCb.Text = "rename IBF-file after unpack";
             this.renameCb.UseVisualStyleBackColor = true;
             // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(174, 64);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(191, 13);
+            this.linkLabel1.TabIndex = 4;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "https://github.com/ucorpor/ibf-unpack";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(376, 71);
+            this.ClientSize = new System.Drawing.Size(373, 80);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.renameCb);
             this.Controls.Add(this.unpackBtn);
             this.Controls.Add(this.pathTxt);
@@ -95,6 +108,7 @@
         private System.Windows.Forms.TextBox pathTxt;
         private System.Windows.Forms.Button unpackBtn;
         private System.Windows.Forms.CheckBox renameCb;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }
 
