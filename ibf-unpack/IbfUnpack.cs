@@ -13,27 +13,24 @@ namespace ibf_unpack
             Directory.CreateDirectory(systemDir);
             
             Stream stream = File.OpenRead(archivePath);
-            int fileNameLength = stream.ReadByte() * 2 - 2;
-            while (fileNameLength > 0)
+            int filenameLength = stream.ReadByte() * 2;
+            while (filenameLength > 0)
             {
-                string fileName = ReadUtf16Le(stream, fileNameLength);
-                string filePath = Path.Combine(systemDir, fileName);
-                File.WriteAllText(filePath, string.Empty);
-
-                stream.ReadByte();
-                stream.ReadByte();
+                string filename = ReadString(stream, filenameLength).Replace("\0", string.Empty);
+                string filepath = Path.Combine(systemDir, filename);
+                File.WriteAllText(filepath, string.Empty);
 
                 int chunkSize = 65536;
                 int fileLength = BitConverter.ToInt32(ReadBytes(stream, 4), 0);
                 for (int i = chunkSize; i < fileLength; i += chunkSize)
                 {
-                    WriteChunkFromStream(stream, chunkSize, filePath);
+                    ReadAndWriteBytes(stream, chunkSize, filepath);
                 }
 
                 int remained = fileLength - fileLength / chunkSize * chunkSize;
-                WriteChunkFromStream(stream, remained, filePath);
+                ReadAndWriteBytes(stream, remained, filepath);
 
-                fileNameLength = stream.ReadByte() * 2 - 2;
+                filenameLength = stream.ReadByte() * 2;
             }
             stream.Close();
 
@@ -42,22 +39,28 @@ namespace ibf_unpack
 
         private static byte[] ReadBytes(Stream stream, int length)
         {
-            byte[] bytesArray = new byte[length];
-            stream.Read(bytesArray, 0, length);
-            return bytesArray;
+            byte[] bytes = new byte[length];
+            stream.Read(bytes, 0, length);
+            return bytes;
         }
 
-        private static string ReadUtf16Le(Stream stream, int size)
+        private static string ReadString(Stream stream, int length)
         {
-            byte[] bytesArray = ReadBytes(stream, size);
-            return Encoding.Unicode.GetString(bytesArray);
+            byte[] bytes = ReadBytes(stream, length);
+            return Encoding.Unicode.GetString(bytes);
         }
 
-        private static void WriteChunkFromStream(Stream stream, int size, string filePath)
+        private static void WriteBytes(byte[] bytes, string path)
         {
-            byte[] bytesArray = ReadBytes(stream, size);
-            string chunk = Encoding.UTF8.GetString(bytesArray);
-            File.AppendAllText(filePath, chunk);
+            FileStream stream = new FileStream(path, FileMode.Append);
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Close();
+        }
+
+        private static void ReadAndWriteBytes(Stream stream, int length, string path)
+        {
+            byte[] bytes = ReadBytes(stream, length);
+            WriteBytes(bytes, path);
         }
 
     }
