@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace ibf_unpack
@@ -11,6 +12,13 @@ namespace ibf_unpack
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string version = FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion;
+            Text += $" v{version}";
         }
 
         private void pathBtn_Click(object sender, EventArgs e)
@@ -52,5 +60,6 @@ namespace ibf_unpack
         {
             Process.Start("https://github.com/ucorpor/ibf-unpack");
         }
+
     }
 }
