@@ -24,7 +24,9 @@ namespace ibf_unpack
         private void pathBtn_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "IBF-files (*.ibf)|*.ibf|All files (*.*)|*.*";
+            dialog.Filter = "IBF-files (*.ibf)|*.ibf|"
+                + "LBF-files (*.lbf)|*.lbf|"
+                + "All files (*.*)|*.*";
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {

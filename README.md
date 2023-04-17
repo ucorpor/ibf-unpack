@@ -1,9 +1,11 @@
 ##  ibf-unpack
 
-Utility for unpack ini-files from `ConfigINI.IBF` for Bioshock, Bioshock 2, Bioshock Remastered, Bioshock 2 Remastered.
+Utility for unpack `.ini` files from `ConfigINI.IBF` for Bioshock, Bioshock 2, Bioshock Remastered, Bioshock 2 Remastered.
 
-After unpack ini-files placed to `ContentBaked\pc\System` directory.
+Also localization `Localizedint.lbf` archive supported too (for `.int` files with translated strings).
 
-You need to rename `ConfigINI.IBF` after unpacking, because Vengeance Engine loads the IBF before INI-files from `System` directory.
+After unpack `.ini` files placed to `ContentBaked\pc\System` directory.
+
+You need to rename `ConfigINI.IBF` or `Localizedint.lbf` after unpacking, because Vengeance Engine loads the `.ibf` and `.lbf` archives before files from `System` directory.
 
 Latest release [download](https://github.com/ucorpor/ibf-unpack/releases/latest/download/ibf-unpack.zip).
