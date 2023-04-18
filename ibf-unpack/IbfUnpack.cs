@@ -7,7 +7,7 @@ namespace ibf_unpack
     static class IbfUnpack
     {
 
-        public static void Unpack(string archivePath, bool rename = false)
+        public static void Unpack(string archivePath)
         {
             string systemDir = Path.Combine(Path.GetDirectoryName(archivePath), "System");
             Directory.CreateDirectory(systemDir);
@@ -33,8 +33,6 @@ namespace ibf_unpack
                 filenameLength = stream.ReadByte() * 2;
             }
             stream.Close();
-
-            if (rename) File.Move(archivePath, $"{archivePath}.backup");
         }
 
         private static byte[] ReadBytes(Stream stream, int length)

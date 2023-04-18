@@ -24,9 +24,9 @@ namespace ibf_unpack
         private void pathBtn_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "IBF-files (*.ibf)|*.ibf|"
-                + "LBF-files (*.lbf)|*.lbf|"
-                + "All files (*.*)|*.*";
+            dialog.Filter = "IBF-files (*.ibf)|*.ibf"
+                + "|LBF-files (*.lbf)|*.lbf"
+                + "|All files (*.*)|*.*";
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -42,7 +42,10 @@ namespace ibf_unpack
             try
             {
                 string path = pathTxt.Text.Trim();
-                IbfUnpack.Unpack(path, renameCb.Checked);
+                IbfUnpack.Unpack(path);
+
+                if (renameCb.Checked) File.Move(path, $"{path}.backup");
+
                 string systemDir = Path.Combine(Path.GetDirectoryName(path), "System");
                 string message = $"Successfully unpacked to:{Environment.NewLine}{systemDir}";
                 MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
