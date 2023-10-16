@@ -66,5 +66,47 @@ namespace ibf_unpack
             Process.Start("https://github.com/ucorpor/ibf-unpack");
         }
 
+        private void makeBtn_Click(object sender, EventArgs e)
+        {
+            Enabled = false;
+            Cursor = Cursors.WaitCursor;
+
+            try
+            {
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Multiselect = true;
+                dialog.Filter = "All files (*.*)|*.*";
+
+                DialogResult result = dialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    string[] files = dialog.FileNames;
+
+                    SaveFileDialog saveDialog = new SaveFileDialog();
+                    saveDialog.RestoreDirectory = true;
+                    saveDialog.FileName = "ConfigINI.IBF";
+                    saveDialog.Filter = "IBF-files (*.ibf)|*.ibf"
+                        + "|LBF-files (*.lbf)|*.lbf"
+                        + "|All files (*.*)|*.*";
+
+                    if (saveDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string archivePath = saveDialog.FileName;
+                        IbfUnpack.Make(files, archivePath);
+                        string message = $"Archive saccessufully saved to:{Environment.NewLine}{archivePath}";
+                        MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Enabled = true;
+                Cursor = Cursors.Default;
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace ibf_unpack
         {
             string systemDir = Path.Combine(Path.GetDirectoryName(archivePath), "System");
             Directory.CreateDirectory(systemDir);
-            
+
             Stream stream = File.OpenRead(archivePath);
             int filenameLength = stream.ReadByte() * 2;
             while (filenameLength > 0)
@@ -61,5 +61,9 @@ namespace ibf_unpack
             WriteBytes(bytes, path);
         }
 
+        public static void Make(string[] files, string archivePath)
+        {
+
+        }
     }
 }
