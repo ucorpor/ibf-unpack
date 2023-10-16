@@ -75,7 +75,9 @@ namespace ibf_unpack
             {
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.Multiselect = true;
-                dialog.Filter = "All files (*.*)|*.*";
+                dialog.Filter = "INI-files (*.ini)|*.ini"
+                    + "|INT-files (*.int)|*.int"
+                    + "|All files (*.*)|*.*";
 
                 DialogResult result = dialog.ShowDialog();
                 if (result == DialogResult.OK)
