@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -63,7 +64,44 @@ namespace ibf_unpack
 
         public static void Make(string[] files, string archivePath)
         {
+            File.WriteAllText(archivePath, string.Empty);
+            foreach (string file in files)
+            {
+                string filename = Path.GetFileName(file);
+                byte[] fullFilenameLengthBytes = BitConverter.GetBytes(filename.Length + 1);
+                byte[] shortFilenameLengthBytes = new byte[1];
+                shortFilenameLengthBytes[0] = fullFilenameLengthBytes[0];
+                WriteBytes(shortFilenameLengthBytes, archivePath);
 
+                List<byte> filenameBytes = new List<byte>();
+                for (int i = 0; i < filename.Length; i++)
+                {
+                    filenameBytes.AddRange(BitConverter.GetBytes(filename[i]));
+                }
+                filenameBytes.Add(0); // filename.Length + 1
+                filenameBytes.Add(0);
+                WriteBytes(filenameBytes.ToArray(), archivePath);
+
+                Stream stream = File.OpenRead(file);
+                int fileLength = Convert.ToInt32(stream.Length);
+                
+                byte[] realFileLengthBytes = BitConverter.GetBytes(fileLength);
+                byte[] shortFileLengthBytes = new byte[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    shortFileLengthBytes[i] = realFileLengthBytes[i];
+                }
+                WriteBytes(shortFileLengthBytes, archivePath);
+
+                int chunkSize = 65536;
+                for (int i = chunkSize; i < stream.Length; i += chunkSize)
+                {
+                    ReadAndWriteBytes(stream, chunkSize, archivePath);
+                }
+
+                int remained = fileLength - fileLength / chunkSize * chunkSize;
+                ReadAndWriteBytes(stream, remained, archivePath);
+            }
         }
     }
 }
