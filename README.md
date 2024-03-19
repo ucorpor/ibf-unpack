@@ -1,6 +1,6 @@
 ##  ibf-unpack
 
-Utility for packing and unpack `.ini` files from `ConfigINI.IBF` for Bioshock, Bioshock 2, Bioshock Remastered, Bioshock 2 Remastered.
+Utility for packing and unpack `.ini` files from `ConfigINI.IBF` for Bioshock, Bioshock Remastered.
 
 Also localization `Localizedint.lbf` archive supported too (for `.int` files with translated strings).
 
