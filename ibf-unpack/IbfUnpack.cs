@@ -36,6 +36,49 @@ namespace ibf_unpack
             stream.Close();
         }
 
+        public static void UnpackV2(string archivePath)
+        {
+            string systemDir = Path.Combine(Path.GetDirectoryName(archivePath), "System");
+            Directory.CreateDirectory(systemDir);
+
+            Stream stream = File.OpenRead(archivePath);
+            int filenameLength = stream.ReadByte() * 2;
+            while (filenameLength > 0)
+            {
+                string filename = ReadString(stream, filenameLength).Replace("\0", string.Empty);
+                string filepath = Path.Combine(systemDir, filename);
+                File.WriteAllText(filepath, string.Empty);
+
+                List<byte> file = new List<byte>();
+                byte prevB = byte.MaxValue;
+                while (true)
+                {
+                    byte b = ReadBytes(stream, 1)[0];
+                    if ((prevB == 0x0D || prevB == 0x5B) && b == 0x0)
+                    {
+                        file.Add(prevB);
+                        file.Add(b);
+                        break;
+                    }
+                    prevB = b;
+                }
+
+                while (true)
+                {
+                    byte[] symbol = ReadBytes(stream, 2);
+                    if (symbol[0] == 0x0 && symbol[1] == 0x0)
+                    {
+                        WriteBytes(file.ToArray(), filepath);
+                        break;
+                    }
+                    file.AddRange(symbol);
+                }
+
+                filenameLength = stream.ReadByte() * 2;
+            }
+            stream.Close();
+        }
+
         private static byte[] ReadBytes(Stream stream, int length)
         {
             byte[] bytes = new byte[length];
