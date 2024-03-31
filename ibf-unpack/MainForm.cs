@@ -42,7 +42,18 @@ namespace ibf_unpack
             try
             {
                 string path = pathTxt.Text.Trim();
-                IbfUnpack.Unpack(path);
+                if (consoleRb.Checked)
+                {
+                    IbfUnpack.Unpack2(path, true);
+                }
+                else if (b2Rb.Checked)
+                {
+                    IbfUnpack.Unpack2(path);
+                }
+                else
+                {
+                    IbfUnpack.Unpack(path);
+                }
 
                 if (renameCb.Checked) File.Move(path, $"{path}.backup");
 
@@ -110,5 +121,6 @@ namespace ibf_unpack
                 Cursor = Cursors.Default;
             }
         }
+
     }
 }

@@ -14,10 +14,10 @@ namespace ibf_unpack
             Directory.CreateDirectory(systemDir);
 
             Stream stream = File.OpenRead(archivePath);
-            int filenameLength = stream.ReadByte() * 2;
+            int filenameLength = stream.ReadByte();
             while (filenameLength > 0)
             {
-                string filename = ReadString(stream, filenameLength).Replace("\0", string.Empty);
+                string filename = ReadString(stream, filenameLength * 2).Replace("\0", string.Empty);
                 string filepath = Path.Combine(systemDir, filename);
                 File.WriteAllText(filepath, string.Empty);
 
@@ -31,52 +31,63 @@ namespace ibf_unpack
                 int remained = fileLength - fileLength / chunkSize * chunkSize;
                 ReadAndWriteBytes(stream, remained, filepath);
 
-                filenameLength = stream.ReadByte() * 2;
+                filenameLength = stream.ReadByte();
             }
             stream.Close();
         }
 
-        public static void UnpackV2(string archivePath)
+        public static void Unpack2(string archivePath, bool isBigEndian = false)
         {
             string systemDir = Path.Combine(Path.GetDirectoryName(archivePath), "System");
             Directory.CreateDirectory(systemDir);
 
             Stream stream = File.OpenRead(archivePath);
-            int filenameLength = stream.ReadByte() * 2;
-            while (filenameLength > 0)
+            int filenameLength = stream.ReadByte();
+            while (stream.Position < stream.Length)
             {
-                string filename = ReadString(stream, filenameLength).Replace("\0", string.Empty);
-                string filepath = Path.Combine(systemDir, filename);
-                File.WriteAllText(filepath, string.Empty);
-
-                List<byte> file = new List<byte>();
-                byte prevB = byte.MaxValue;
-                while (true)
+                if (filenameLength > 0)
                 {
-                    byte b = ReadBytes(stream, 1)[0];
-                    if ((prevB == 0x0D || prevB == 0x5B) && b == 0x0)
+                    string filename = ReadString(stream, filenameLength * 2, isBigEndian).Replace("\0", string.Empty);
+                    string filepath = Path.Combine(systemDir, filename);
+                    File.WriteAllText(filepath, string.Empty);
+
+                    List<byte> file = new List<byte>();
+                    byte prevB = byte.MaxValue;
+                    while (stream.Position < stream.Length)
                     {
-                        file.Add(prevB);
-                        file.Add(b);
-                        break;
+                        byte b = ReadByte(stream);
+                        if ((isBigEndian == false && prevB != 0x0 && b == 0x0)
+                            || (isBigEndian == true && prevB == 0x0 && b != 0x0))
+                        {
+                            file.Add(prevB);
+                            file.Add(b);
+                            break;
+                        }
+                        prevB = b;
                     }
-                    prevB = b;
+
+                    while (stream.Position < stream.Length)
+                    {
+                        byte[] symbol = ReadBytes(stream, 2);
+                        if (symbol[0] == 0x0 && symbol[1] == 0x0)
+                        {
+                            WriteBytes(file.ToArray(), filepath);
+                            break;
+                        }
+                        file.AddRange(symbol);
+                    }
                 }
 
-                while (true)
-                {
-                    byte[] symbol = ReadBytes(stream, 2);
-                    if (symbol[0] == 0x0 && symbol[1] == 0x0)
-                    {
-                        WriteBytes(file.ToArray(), filepath);
-                        break;
-                    }
-                    file.AddRange(symbol);
-                }
-
-                filenameLength = stream.ReadByte() * 2;
+                filenameLength = stream.ReadByte();
             }
             stream.Close();
+        }
+
+        private static byte ReadByte(Stream stream)
+        {
+            byte[] bytes = new byte[1];
+            stream.Read(bytes, 0, 1);
+            return bytes[0];
         }
 
         private static byte[] ReadBytes(Stream stream, int length)
@@ -86,9 +97,15 @@ namespace ibf_unpack
             return bytes;
         }
 
-        private static string ReadString(Stream stream, int length)
+        private static string ReadString(Stream stream, int length, bool isBigEndian = false)
         {
             byte[] bytes = ReadBytes(stream, length);
+
+            if (isBigEndian)
+            {
+                return Encoding.BigEndianUnicode.GetString(bytes);
+            }
+
             return Encoding.Unicode.GetString(bytes);
         }
 
